@@ -33,7 +33,7 @@ class LottoNumbersTest {
     @DisplayName("정상적인 번호면 생성된다")
     fun valid_numbers_create_successfully() {
         val lotto = LottoNumbers.of(listOf(1, 2, 3, 4, 5, 6))
-        assertEquals(6, lotto.numbers.size)
-        assertEquals(listOf(1, 2, 3, 4, 5, 6), lotto.numbers.map { it.value })
+        assertEquals(6, lotto.values.size)
+        assertEquals(listOf(1, 2, 3, 4, 5, 6), lotto.values.map { it.value })
     }
 }

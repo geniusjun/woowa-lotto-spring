@@ -9,6 +9,6 @@ class LottoService {
 
     fun generateLottoNumbers(): List<LottoNumber> {
         val lotto = LottoNumberGenerator.generate()
-        return lotto.numbers
+        return lotto.values
     }
 }

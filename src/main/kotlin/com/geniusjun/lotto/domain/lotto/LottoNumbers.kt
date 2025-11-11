@@ -1,12 +1,12 @@
 package com.geniusjun.lotto.domain.lotto
 
 class LottoNumbers private constructor(
-    val numbers: List<LottoNumber>
+    val values: List<LottoNumber>
 ) {
 
     init {
-        validateSize(numbers)
-        validateDistinct(numbers)
+        validateSize(values)
+        validateDistinct(values)
     }
 
     private fun validateSize(numbers: List<LottoNumber>) {
@@ -24,6 +24,7 @@ class LottoNumbers private constructor(
             )
         }
     }
+    fun toIntList(): List<Int> = values.map { it.value }
 
     companion object {
         private const val LOTTO_SIZE = 6

@@ -11,7 +11,7 @@ class WinningNumbers private constructor(
 
     private fun validateBonus() {
         bonusNumber?.let { bonus ->
-            if (numbers.numbers.any { it.value == bonus.value }) {
+            if (numbers.values.any { it.value == bonus.value }) {
                 throw InvalidLottoException(
                     "보너스 번호는 당첨 번호와 중복될 수 없습니다. (보너스: ${bonus.value})"
                 )
