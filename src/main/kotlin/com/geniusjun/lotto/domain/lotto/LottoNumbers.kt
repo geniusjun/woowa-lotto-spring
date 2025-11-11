@@ -5,14 +5,30 @@ class LottoNumbers private constructor(
 ) {
 
     init {
+        validate(numbers)
+    }
+
+    private fun validate(numbers: List<Int>) {
+        validateSize(numbers)
+        validateDistinct(numbers)
+        validateRange(numbers)
+    }
+
+    private fun validateSize(numbers: List<Int>) {
         require(numbers.size == LOTTO_SIZE) {
-            "Lotto must have exactly $LOTTO_SIZE numbers. given=${numbers.size}"
+            "로또 번호는 정확히 ${LOTTO_SIZE}개여야 합니다. (입력된 개수: ${numbers.size})"
         }
+    }
+
+    private fun validateDistinct(numbers: List<Int>) {
         require(numbers.distinct().size == LOTTO_SIZE) {
-            "Lotto numbers must be distinct. given=$numbers"
+            "로또 번호는 중복될 수 없습니다. (입력된 번호: $numbers)"
         }
+    }
+
+    private fun validateRange(numbers: List<Int>) {
         require(numbers.all { it in MIN_NUMBER..MAX_NUMBER }) {
-            "Lotto numbers must be between $MIN_NUMBER and $MAX_NUMBER. given=$numbers"
+            "로또 번호는 ${MIN_NUMBER}부터 ${MAX_NUMBER} 사이의 숫자여야 합니다. (입력된 번호: $numbers)"
         }
     }
 
