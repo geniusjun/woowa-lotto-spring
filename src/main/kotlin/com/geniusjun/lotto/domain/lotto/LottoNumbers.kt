@@ -15,20 +15,27 @@ class LottoNumbers private constructor(
     }
 
     private fun validateSize(numbers: List<Int>) {
-        require(numbers.size == LOTTO_SIZE) {
-            "로또 번호는 정확히 ${LOTTO_SIZE}개여야 합니다. (입력된 개수: ${numbers.size})"
+        if (numbers.size != LOTTO_SIZE) {
+            throw InvalidLottoException(
+                "로또 번호는 정확히 ${LOTTO_SIZE}개여야 합니다. (입력된 개수: ${numbers.size})"
+            )
         }
     }
 
     private fun validateDistinct(numbers: List<Int>) {
-        require(numbers.distinct().size == LOTTO_SIZE) {
-            "로또 번호는 중복될 수 없습니다. (입력된 번호: $numbers)"
+        if (numbers.distinct().size != LOTTO_SIZE) {
+            throw InvalidLottoException(
+                "로또 번호는 중복될 수 없습니다. (입력된 번호: $numbers)"
+            )
         }
     }
 
     private fun validateRange(numbers: List<Int>) {
-        require(numbers.all { it in MIN_NUMBER..MAX_NUMBER }) {
-            "로또 번호는 ${MIN_NUMBER}부터 ${MAX_NUMBER} 사이의 숫자여야 합니다. (입력된 번호: $numbers)"
+        val outOfRange = numbers.filterNot { it in MIN_NUMBER..MAX_NUMBER }
+        if (outOfRange.isNotEmpty()) {
+            throw InvalidLottoException(
+                "로또 번호는 ${MIN_NUMBER}부터 ${MAX_NUMBER} 사이여야 합니다. (범위를 벗어난 번호: $outOfRange)"
+            )
         }
     }
 
@@ -38,7 +45,7 @@ class LottoNumbers private constructor(
         private const val MAX_NUMBER = 45
 
         fun of(numbers: List<Int>): LottoNumbers {
-            return LottoNumbers(numbers.toList()) // 방어적 복사
+            return LottoNumbers(numbers.toList())
         }
     }
 }
