@@ -34,6 +34,6 @@ class LottoNumbersTest {
     fun valid_numbers_create_successfully() {
         val lotto = LottoNumbers.of(listOf(1, 2, 3, 4, 5, 6))
         assertEquals(6, lotto.values.size)
-        assertEquals(listOf(1, 2, 3, 4, 5, 6), lotto.values.map { it.value })
+        assertEquals(listOf(1,2,3,4,5,6), lotto.toIntList())
     }
 }

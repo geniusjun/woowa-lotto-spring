@@ -13,7 +13,7 @@ class LottoNumberGeneratorTest {
     @DisplayName("랜덤으로 생성된 번호는 6개이고, 서로 중복되지 않으며, 1~45 범위에 있어야 한다")
     fun generate_valid_numbers() {
         val lotto = LottoNumberGenerator.generate()
-        val nums = lotto.values.map { it.value }
+        val nums = lotto.toIntList()
 
         assertEquals(6, nums.size)
         assertEquals(6, nums.distinct().size)
