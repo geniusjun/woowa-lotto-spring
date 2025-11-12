@@ -13,7 +13,7 @@ class LottoMatcherTest {
     @DisplayName("6개 모두 맞으면 1등이다")
     fun first_prize() {
         val my = LottoNumbers.of(listOf(1, 2, 3, 4, 5, 6))
-        val winning = WinningNumbers.of(listOf(1, 2, 3, 4, 5, 6))
+        val winning = DrawResult.of(listOf(1, 2, 3, 4, 5, 6))
 
         val result = LottoMatcher.match(my, winning)
 
@@ -26,7 +26,7 @@ class LottoMatcherTest {
     @DisplayName("5개 + 보너스 맞으면 2등이다")
     fun second_prize() {
         val my = LottoNumbers.of(listOf(1, 2, 3, 4, 5, 7))
-        val winning = WinningNumbers.of(
+        val winning = DrawResult.of(
             mainNumbers = listOf(1, 2, 3, 4, 5, 6),
             bonus = 7
         )
@@ -42,7 +42,7 @@ class LottoMatcherTest {
     @DisplayName("5개만 맞으면 3등이다")
     fun third_prize() {
         val my = LottoNumbers.of(listOf(1, 2, 3, 4, 5, 40))
-        val winning = WinningNumbers.of(listOf(1, 2, 3, 4, 5, 6))
+        val winning = DrawResult.of(listOf(1, 2, 3, 4, 5, 6))
 
         val result = LottoMatcher.match(my, winning)
 
@@ -55,7 +55,7 @@ class LottoMatcherTest {
     @DisplayName("3개 맞으면 5등이다")
     fun fifth_prize() {
         val my = LottoNumbers.of(listOf(1, 2, 3, 40, 41, 42))
-        val winning = WinningNumbers.of(listOf(1, 2, 3, 4, 5, 6))
+        val winning = DrawResult.of(listOf(1, 2, 3, 4, 5, 6))
 
         val result = LottoMatcher.match(my, winning)
 
@@ -68,7 +68,7 @@ class LottoMatcherTest {
     @DisplayName("2개 이하면 꽝이다")
     fun none_prize() {
         val my = LottoNumbers.of(listOf(40, 41, 42, 43, 44, 45))
-        val winning = WinningNumbers.of(listOf(1, 2, 3, 4, 5, 6))
+        val winning = DrawResult.of(listOf(1, 2, 3, 4, 5, 6))
 
         val result = LottoMatcher.match(my, winning)
 

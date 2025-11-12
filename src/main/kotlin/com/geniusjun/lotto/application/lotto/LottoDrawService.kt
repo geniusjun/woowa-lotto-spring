@@ -29,7 +29,7 @@ class LottoDrawService(
 
         val latestWinning = winningNumbersService.getLatest()
             ?: throw WinningNumbersNotFoundException("등록된 당첨 번호가 없습니다.")
-        val winningNumbers = WinningNumbers.of(
+        val winningNumbers = DrawResult.of(
             mainNumbers = latestWinning.mainNumbers,
             bonus = latestWinning.bonusNumber
         )
@@ -47,7 +47,7 @@ class LottoDrawService(
 
     private fun buildResponse(
         myLotto: LottoNumbers,
-        winning: WinningNumbers,
+        winning: DrawResult,
         result: LottoResult,
         balance: Long
     ): LottoDrawResponse {

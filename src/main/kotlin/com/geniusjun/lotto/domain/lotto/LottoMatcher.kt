@@ -2,7 +2,7 @@ package com.geniusjun.lotto.domain.lotto
 
 object LottoMatcher {
 
-    fun match(myNumbers: LottoNumbers, winning: WinningNumbers): LottoResult {
+    fun match(myNumbers: LottoNumbers, winning: DrawResult): LottoResult {
         val winningValues = winning.numbers.toIntList()
         val myValues = myNumbers.toIntList()
 

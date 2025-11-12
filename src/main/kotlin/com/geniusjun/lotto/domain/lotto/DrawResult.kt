@@ -2,7 +2,7 @@ package com.geniusjun.lotto.domain.lotto
 
 import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 
-class WinningNumbers private constructor(
+class DrawResult private constructor(
     val numbers: LottoNumbers,
     val bonusNumber: LottoNumber?
 ) {
@@ -22,8 +22,8 @@ class WinningNumbers private constructor(
     }
 
     companion object {
-        fun of(mainNumbers: List<Int>, bonus: Int? = null): WinningNumbers {
-            return WinningNumbers(
+        fun of(mainNumbers: List<Int>, bonus: Int? = null): DrawResult {
+            return DrawResult(
                 LottoNumbers.of(mainNumbers),
                 bonus?.let { LottoNumber.of(it) }
             )
