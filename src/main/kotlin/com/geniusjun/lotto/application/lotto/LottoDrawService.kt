@@ -1,7 +1,9 @@
 package com.geniusjun.lotto.application.lotto
 
 import com.geniusjun.lotto.domain.lotto.*
+import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
 import com.geniusjun.lotto.domain.member.MemberRepository
+import com.geniusjun.lotto.domain.member.exception.MemberNotFoundException
 import com.geniusjun.lotto.presentation.lotto.dto.LottoDrawResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,34 +21,27 @@ class LottoDrawService(
     @Transactional
     fun drawForMember(memberId: Long): LottoDrawResponse {
         val member = memberRepository.findById(memberId)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 회원입니다. id=$memberId") }
+            .orElseThrow { MemberNotFoundException("존재하지 않는 회원입니다. (id=$memberId)") }
 
-        // 구매 시 balance 차감
         member.decreaseBalance(LOTTO_PRICE)
 
-        // 랜덤 로또 생성
         val myLotto = LottoNumberGenerator.generate()
 
-        // 최신 당첨 번호 조회
         val latestWinning = winningNumbersService.getLatest()
-            ?: throw IllegalStateException("등록된 당첨 번호가 없습니다.")
+            ?: throw WinningNumbersNotFoundException("등록된 당첨 번호가 없습니다.")
         val winningNumbers = WinningNumbers.of(
             mainNumbers = latestWinning.mainNumbers,
             bonus = latestWinning.bonusNumber
         )
 
-        // 결과 계산
         val result = LottoMatcher.match(myLotto, winningNumbers)
 
-        // 당첨금 지급
         if (result.reward > 0) {
             member.increaseBalance(result.reward.toLong())
         }
 
-        // DB 반영
         memberRepository.save(member)
 
-        // 응답 생성
         return buildResponse(myLotto, winningNumbers, result, member.balance)
     }
 
