@@ -1,7 +1,7 @@
 package com.geniusjun.lotto.presentation.lotto
 
 import com.geniusjun.lotto.application.lotto.WinningNumbersService
-import com.geniusjun.lotto.domain.lotto.InvalidLottoException
+import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 import com.geniusjun.lotto.presentation.lotto.dto.WinningNumbersRequest
 import com.geniusjun.lotto.presentation.lotto.dto.WinningNumbersResponse
 import org.springframework.http.HttpStatus

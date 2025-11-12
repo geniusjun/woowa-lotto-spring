@@ -1,6 +1,6 @@
 package com.geniusjun.lotto.presentation.common
 
-import com.geniusjun.lotto.domain.lotto.InvalidLottoException
+import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice

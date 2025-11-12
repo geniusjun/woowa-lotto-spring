@@ -1,6 +1,6 @@
 package com.geniusjun.lotto.domain
 
-import com.geniusjun.lotto.domain.lotto.InvalidLottoException
+import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 import com.geniusjun.lotto.domain.lotto.LottoNumbers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

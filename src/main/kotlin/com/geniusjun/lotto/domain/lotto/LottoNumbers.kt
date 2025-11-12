@@ -1,5 +1,7 @@
 package com.geniusjun.lotto.domain.lotto
 
+import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
+
 class LottoNumbers private constructor(
     val values: List<LottoNumber>
 ) {
