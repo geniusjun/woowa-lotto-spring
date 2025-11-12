@@ -1,20 +1,20 @@
 package com.geniusjun.lotto.presentation.lotto
 
-import com.geniusjun.lotto.application.lotto.LottoService
-import com.geniusjun.lotto.presentation.lotto.dto.LottoGenerateResponse
+import com.geniusjun.lotto.application.lotto.LottoDrawService
+import com.geniusjun.lotto.presentation.lotto.dto.LottoDrawResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/lotto")
 class LottoController(
-    private val lottoService: LottoService
+    private val lottoDrawService: LottoDrawService
 ) {
 
-    @PostMapping("/generate")
-    fun generate(): LottoGenerateResponse {
-        val numbers = lottoService.generateLottoNumbers()
-        return LottoGenerateResponse(numbers = numbers)
+    @PostMapping("/draw")
+    fun draw(@RequestParam memberId: Long): LottoDrawResponse {
+        return lottoDrawService.drawForMember(memberId)
     }
 }
