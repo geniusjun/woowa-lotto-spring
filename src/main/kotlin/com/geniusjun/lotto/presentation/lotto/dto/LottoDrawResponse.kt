@@ -7,7 +7,7 @@ data class LottoDrawResponse(
     val bonusNumber: Int?,
     val bonusMatched: Boolean,
     val rank: String,
-    val reward: Int,
+    val reward: Long,
     val balance: Long
 ) {
     companion object {
@@ -18,7 +18,7 @@ data class LottoDrawResponse(
             bonusNumber: Int?,
             bonusMatched: Boolean,
             rank: String,
-            reward: Int,
+            reward: Long,
             balance: Long
         ) = LottoDrawResponse(
             myNumbers,
