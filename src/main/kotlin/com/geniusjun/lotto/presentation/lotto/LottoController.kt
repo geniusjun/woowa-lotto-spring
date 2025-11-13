@@ -1,20 +1,22 @@
 package com.geniusjun.lotto.presentation.lotto
 
 import com.geniusjun.lotto.application.lotto.LottoDrawService
+import com.geniusjun.lotto.presentation.common.ApiResponse
+import com.geniusjun.lotto.presentation.common.SecurityUtil
 import com.geniusjun.lotto.presentation.lotto.dto.LottoDrawResponse
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/lotto")
+@RequestMapping("/api/lotto")
 class LottoController(
     private val lottoDrawService: LottoDrawService
 ) {
 
+    /** 랜덤 로또 1회 구매 */
     @PostMapping("/draw")
-    fun draw(@RequestParam memberId: Long): LottoDrawResponse {
-        return lottoDrawService.drawForMember(memberId)
+    fun draw(): ApiResponse<LottoDrawResponse> {
+        val memberId = SecurityUtil.currentMemberId()
+        val result = lottoDrawService.drawForMember(memberId)
+        return ApiResponse.ok(result)
     }
 }
