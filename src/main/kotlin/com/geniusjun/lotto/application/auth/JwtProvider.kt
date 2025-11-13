@@ -38,4 +38,6 @@ class JwtProvider(
 
     fun accessExpSeconds() = accessExpSeconds
     fun refreshExpSeconds() = refreshExpSeconds
+
+    fun getKey() = key
 }
