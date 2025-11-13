@@ -28,7 +28,6 @@ class LottoDrawService(
         val myLotto = LottoNumberGenerator.generate()
 
         val latestWinning = winningNumbersService.getLatest()
-            ?: throw WinningNumbersNotFoundException("등록된 당첨 번호가 없습니다.")
         val winningNumbers = DrawResult.of(
             mainNumbers = latestWinning.mainNumbers,
             bonus = latestWinning.bonusNumber
