@@ -1,5 +1,8 @@
 package com.geniusjun.lotto.application.auth
 
+import com.geniusjun.lotto.application.auth.exception.InvalidJwtTokenException
+import com.geniusjun.lotto.application.auth.exception.RefreshTokenMismatchException
+import com.geniusjun.lotto.application.auth.exception.RefreshTokenNotFoundException
 import com.geniusjun.lotto.domain.member.Member
 import com.geniusjun.lotto.domain.member.MemberRepository
 import org.springframework.stereotype.Service
@@ -59,15 +62,19 @@ class AuthService(
     /** 리프레시 토큰으로 새 Access 발급 */
     @Transactional(readOnly = true)
     fun reissueAccessByRefresh(refreshToken: String): ReissueResponse {
-        // 1) 형식/서명/만료 검증 + subject 파싱
-        require(jwtProvider.isRefreshToken(refreshToken)) { "Not a refresh token" }
+        if (!jwtProvider.isRefreshToken(refreshToken)) {
+            throw InvalidJwtTokenException("Refresh token 형식이 아닙니다.")
+        }
+
         val memberId = jwtProvider.memberIdFromRefresh(refreshToken)
 
-        // 2) Redis에 저장된 최신 리프레시와 '정확히' 일치해야 함
-        val saved = refreshStore.get(memberId) ?: throw IllegalArgumentException("Refresh not found")
-        require(saved == refreshToken) { "Refresh token mismatch" }
+        val saved = refreshStore.get(memberId)
+            ?: throw RefreshTokenNotFoundException("리프레시 토큰을 찾을 수 없습니다. (memberId=$memberId)")
 
-        // 3) 새 Access 발급
+        if (saved != refreshToken) {
+            throw RefreshTokenMismatchException("리프레시 토큰이 일치하지 않습니다. (memberId=$memberId)")
+        }
+
         val newAccess = jwtProvider.createAccessToken(memberId)
         return ReissueResponse(
             accessToken = newAccess,

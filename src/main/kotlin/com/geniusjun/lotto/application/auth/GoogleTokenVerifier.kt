@@ -1,5 +1,6 @@
 package com.geniusjun.lotto.application.auth
 
+import com.geniusjun.lotto.application.auth.exception.GoogleIdTokenInvalidException
 import com.google.auth.oauth2.TokenVerifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -28,7 +29,7 @@ class GoogleTokenVerifier(
      */
     fun verify(idToken: String): GoogleUserPayload {
         val token = verifier.verify(idToken)
-            ?: throw IllegalArgumentException("Invalid Google ID token")
+            ?: throw GoogleIdTokenInvalidException("Invalid Google ID token")
 
         val claims = token.payload
         val emailVerified = (claims["email_verified"] as? Boolean)

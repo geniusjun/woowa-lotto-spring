@@ -7,6 +7,7 @@ import com.geniusjun.lotto.application.auth.exception.RefreshTokenMismatchExcept
 import com.geniusjun.lotto.application.auth.exception.RefreshTokenNotFoundException
 import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
+import com.geniusjun.lotto.domain.member.exception.DuplicateNicknameException
 import com.geniusjun.lotto.domain.member.exception.InvalidBalanceException
 import com.geniusjun.lotto.domain.member.exception.MemberNotFoundException
 import org.springframework.http.ResponseEntity
@@ -25,6 +26,12 @@ class GlobalExceptionHandler {
     @ExceptionHandler(MemberNotFoundException::class)
     fun handleMemberNotFound(ex: MemberNotFoundException): ResponseEntity<ErrorResponse> {
         val code = ErrorCode.MEMBER_NOT_FOUND
+        return buildErrorResponse(code, ex)
+    }
+
+    @ExceptionHandler(DuplicateNicknameException::class)
+    fun handleDuplicateNickname(ex: DuplicateNicknameException): ResponseEntity<ErrorResponse> {
+        val code = ErrorCode.DUPLICATE_NICKNAME
         return buildErrorResponse(code, ex)
     }
 
