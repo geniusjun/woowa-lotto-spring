@@ -56,17 +56,35 @@ class AuthService(
         )
     }
 
-    /** 리프레시로 액세스 재발급 (나중에 라우트 붙일 예정) */
+    /** 리프레시 토큰으로 새 Access 발급 */
     @Transactional(readOnly = true)
-    fun reissueAccess(memberId: Long, providedRefresh: String): String {
-        val saved = refreshStore.get(memberId) ?: throw IllegalArgumentException("refresh not found")
-        require(saved == providedRefresh) { "refresh mismatch" }
+    fun reissueAccessByRefresh(refreshToken: String): ReissueResponse {
+        // 1) 형식/서명/만료 검증 + subject 파싱
+        require(jwtProvider.isRefreshToken(refreshToken)) { "Not a refresh token" }
+        val memberId = jwtProvider.memberIdFromRefresh(refreshToken)
 
-        return jwtProvider.createAccessToken(memberId)
+        // 2) Redis에 저장된 최신 리프레시와 '정확히' 일치해야 함
+        val saved = refreshStore.get(memberId) ?: throw IllegalArgumentException("Refresh not found")
+        require(saved == refreshToken) { "Refresh token mismatch" }
+
+        // 3) 새 Access 발급
+        val newAccess = jwtProvider.createAccessToken(memberId)
+        return ReissueResponse(
+            accessToken = newAccess,
+            accessTokenExpiresIn = jwtProvider.accessExpSeconds(),
+            tokenType = "Bearer"
+        )
     }
 
+    /** 로그아웃: 현재 로그인 사용자의 리프레시를 폐기 */
     @Transactional
     fun logout(memberId: Long) {
         refreshStore.delete(memberId)
     }
+
+    data class ReissueResponse(
+        val accessToken: String,
+        val accessTokenExpiresIn: Long,
+        val tokenType: String
+    )
 }
