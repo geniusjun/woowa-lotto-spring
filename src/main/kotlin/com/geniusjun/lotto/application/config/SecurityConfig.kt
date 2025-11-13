@@ -12,7 +12,7 @@ class SecurityConfig {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/auth/google", "/api/auth/refresh").permitAll()
+                it.requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .httpBasic { it.disable() }
