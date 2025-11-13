@@ -33,6 +33,9 @@ dependencies {
 	// redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+	// Google Auth Library
+	implementation("com.google.auth:google-auth-library-oauth2-http:1.28.0")
+
 	// Read .env
 	implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
