@@ -12,7 +12,10 @@ class Member(
     var nickname: String,
 
     @Column(nullable = false)
-    var balance: Long = 0L
+    var balance: Long = 0L,
+
+    @Column(nullable = true, unique = true)
+    var googleSub: String? = null
 
 ) : BaseEntity() {
 
