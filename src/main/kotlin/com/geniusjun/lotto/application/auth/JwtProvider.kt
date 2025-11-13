@@ -1,5 +1,6 @@
 package com.geniusjun.lotto.application.auth
 
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
@@ -40,4 +41,23 @@ class JwtProvider(
     fun refreshExpSeconds() = refreshExpSeconds
 
     fun getKey() = key
+
+    fun parseClaims(token: String): Claims =
+        Jwts.parser()
+            .verifyWith(getKey())
+            .build()
+            .parseSignedClaims(token)
+            .payload
+
+    fun subjectOf(token: String): String = parseClaims(token).subject
+
+    fun isRefreshToken(token: String): Boolean = subjectOf(token).startsWith("refresh:")
+
+    fun memberIdFromAccess(token: String): Long = subjectOf(token).toLong()
+
+    fun memberIdFromRefresh(token: String): Long {
+        val sub = subjectOf(token) // e.g., "refresh:123"
+        require(sub.startsWith("refresh:")) { "Not a refresh token" }
+        return sub.removePrefix("refresh:").toLong()
+    }
 }
