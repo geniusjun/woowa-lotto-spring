@@ -34,7 +34,7 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
 	// swagger
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
 	//postgresql
 	runtimeOnly("org.postgresql:postgresql")
@@ -46,7 +46,7 @@ dependencies {
 	implementation("com.google.auth:google-auth-library-oauth2-http:1.28.0")
 
 	// Read .env
-	implementation("me.paulschwarz:spring-dotenv:4.0.0")
+	// implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
