@@ -3,6 +3,7 @@ package com.geniusjun.lotto.presentation.auth
 import com.geniusjun.lotto.application.auth.AuthService
 import com.geniusjun.lotto.application.auth.exception.InvalidJwtTokenException
 import com.geniusjun.lotto.presentation.common.ApiResponse
+import com.geniusjun.lotto.presentation.common.SecurityUtil
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
@@ -31,16 +32,8 @@ class AuthController(
     /** 로그아웃 */
     @DeleteMapping("/logout")
     fun logout(): ApiResponse<String> {
-        val memberId = currentMemberId()
+        val memberId = SecurityUtil.currentMemberId()
         authService.logout(memberId)
         return ApiResponse.ok("LOGOUT_OK")
-    }
-
-    /** SecurityContext에서 memberId 추출 */
-    private fun currentMemberId(): Long {
-        val auth = SecurityContextHolder.getContext().authentication
-            ?: throw InvalidJwtTokenException("인증 정보가 없습니다. (로그인이 필요합니다.)")
-
-        return auth.principal as Long
     }
 }
