@@ -14,10 +14,11 @@ class WinningNumbersController(
     /** 최신 당첨 번호 */
     @GetMapping("/latest")
     fun getLatest(): ApiResponse<WinningNumbersResponse> {
+
         val entity = winningNumbersService.getLatest()
 
         val response = WinningNumbersResponse(
-            mainNumbers = entity.mainNumbers,
+            mainNumbers = entity.mainNumbersAsList(),
             bonusNumber = entity.bonusNumber
         )
 
