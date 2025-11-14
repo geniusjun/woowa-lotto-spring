@@ -11,8 +11,8 @@ class WinningNumbersEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "main_numbers", columnDefinition = "jsonb", nullable = false)
-    var mainNumbers: List<Int>,
+    @Column(name = "main_numbers", nullable = false)
+    var mainNumbers: String,
 
     @Column(name = "bonus_number", nullable = false)
     var bonusNumber: Int
@@ -20,7 +20,11 @@ class WinningNumbersEntity(
 ) : BaseEntity() {
 
     fun update(main: List<Int>, bonus: Int) {
-        this.mainNumbers = main
+        this.mainNumbers = main.joinToString(",")
         this.bonusNumber = bonus
     }
+
+    fun mainNumbersAsList(): List<Int> =
+        mainNumbers.split(",").map { it.trim().toInt() }
 }
+
