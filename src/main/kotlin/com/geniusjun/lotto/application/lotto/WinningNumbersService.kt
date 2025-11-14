@@ -1,8 +1,8 @@
 package com.geniusjun.lotto.application.lotto
 
+import com.geniusjun.lotto.domain.lotto.LottoNumberGenerator
 import com.geniusjun.lotto.domain.lotto.WinningNumbersEntity
 import com.geniusjun.lotto.domain.lotto.WinningNumbersRepository
-import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersDuplicateException
 import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,29 +13,23 @@ class WinningNumbersService(
 ) {
 
     @Transactional
-    fun register(round: Long, mainNumbers: List<Int>, bonusNumber: Int?): Long {
-        val exists = winningNumbersRepository.findByRound(round)
-        if (exists != null) {
-            throw WinningNumbersDuplicateException("이미 등록된 회차입니다. (round=$round)")
-        }
+    fun generateWeeklyNumbers() {
+        val main = LottoNumberGenerator.generate().toIntList()
 
-        val entity = WinningNumbersEntity(
-            round = round,
-            mainNumbers = mainNumbers,
-            bonusNumber = bonusNumber
-        )
-        return winningNumbersRepository.save(entity).id!!
+        val bonus = (1..45)
+            .filterNot { main.contains(it) }
+            .random()
+
+        val entity = winningNumbersRepository.findTop1ByOrderByUpdatedAtDesc()
+            ?: WinningNumbersEntity(mainNumbers = main, bonusNumber = bonus)
+
+        entity.update(main, bonus)
+        winningNumbersRepository.save(entity)
     }
 
     @Transactional(readOnly = true)
     fun getLatest(): WinningNumbersEntity {
-        return winningNumbersRepository.findTop1ByOrderByRoundDesc()
+        return winningNumbersRepository.findTop1ByOrderByUpdatedAtDesc()
             ?: throw WinningNumbersNotFoundException("등록된 당첨 번호가 없습니다.")
-    }
-
-    @Transactional(readOnly = true)
-    fun getByRound(round: Long): WinningNumbersEntity {
-        return winningNumbersRepository.findByRound(round)
-            ?: throw WinningNumbersNotFoundException("해당 회차의 당첨 번호가 없습니다. (round=$round)")
     }
 }
