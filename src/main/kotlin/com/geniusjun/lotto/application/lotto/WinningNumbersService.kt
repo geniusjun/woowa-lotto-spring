@@ -15,13 +15,13 @@ class WinningNumbersService(
     @Transactional
     fun generateWeeklyNumbers() {
         val main = LottoNumberGenerator.generate().toIntList()
-
-        val bonus = (1..45)
-            .filterNot { main.contains(it) }
-            .random()
+        val bonus = (1..45).filterNot { main.contains(it) }.random()
 
         val entity = winningNumbersRepository.findTop1ByOrderByUpdatedAtDesc()
-            ?: WinningNumbersEntity(mainNumbers = main, bonusNumber = bonus)
+            ?: WinningNumbersEntity(
+                mainNumbers = main.joinToString(","),
+                bonusNumber = bonus
+            )
 
         entity.update(main, bonus)
         winningNumbersRepository.save(entity)
