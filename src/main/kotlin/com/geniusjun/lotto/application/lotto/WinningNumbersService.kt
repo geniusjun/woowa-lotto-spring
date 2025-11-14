@@ -2,6 +2,8 @@ package com.geniusjun.lotto.application.lotto
 
 import com.geniusjun.lotto.domain.lotto.WinningNumbersEntity
 import com.geniusjun.lotto.domain.lotto.WinningNumbersRepository
+import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersDuplicateException
+import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,7 +16,7 @@ class WinningNumbersService(
     fun register(round: Long, mainNumbers: List<Int>, bonusNumber: Int?): Long {
         val exists = winningNumbersRepository.findByRound(round)
         if (exists != null) {
-            throw IllegalArgumentException("이미 등록된 회차입니다. round=$round") // 이미 있는 회차면 막기
+            throw WinningNumbersDuplicateException("이미 등록된 회차입니다. (round=$round)")
         }
 
         val entity = WinningNumbersEntity(
@@ -26,12 +28,14 @@ class WinningNumbersService(
     }
 
     @Transactional(readOnly = true)
-    fun getLatest(): WinningNumbersEntity? {
+    fun getLatest(): WinningNumbersEntity {
         return winningNumbersRepository.findTop1ByOrderByRoundDesc()
+            ?: throw WinningNumbersNotFoundException("등록된 당첨 번호가 없습니다.")
     }
 
     @Transactional(readOnly = true)
-    fun getByRound(round: Long): WinningNumbersEntity? {
+    fun getByRound(round: Long): WinningNumbersEntity {
         return winningNumbersRepository.findByRound(round)
+            ?: throw WinningNumbersNotFoundException("해당 회차의 당첨 번호가 없습니다. (round=$round)")
     }
 }

@@ -27,11 +27,26 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+	// jwt, security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
+
+	// swagger
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+
 	//postgresql
 	runtimeOnly("org.postgresql:postgresql")
 
 	// redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+	// Google Auth Library
+	implementation("com.google.auth:google-auth-library-oauth2-http:1.28.0")
+
+	// Read .env
+	// implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

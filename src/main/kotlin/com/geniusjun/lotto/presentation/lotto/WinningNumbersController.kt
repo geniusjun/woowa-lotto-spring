@@ -1,52 +1,60 @@
 package com.geniusjun.lotto.presentation.lotto
 
 import com.geniusjun.lotto.application.lotto.WinningNumbersService
-import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
+import com.geniusjun.lotto.presentation.common.ApiResponse
 import com.geniusjun.lotto.presentation.lotto.dto.WinningNumbersRequest
 import com.geniusjun.lotto.presentation.lotto.dto.WinningNumbersResponse
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/winning")
+@RequestMapping("/api/winning")
 class WinningNumbersController(
     private val winningNumbersService: WinningNumbersService
 ) {
 
+    /** 당첨 번호 등록 */
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    fun register(@RequestBody request: WinningNumbersRequest): WinningNumbersResponse {
+    fun register(@RequestBody request: WinningNumbersRequest): ApiResponse<WinningNumbersResponse> {
         winningNumbersService.register(
             request.round,
             request.mainNumbers,
             request.bonusNumber
         )
-        return WinningNumbersResponse(
+
+        val response = WinningNumbersResponse(
             round = request.round,
             mainNumbers = request.mainNumbers,
             bonusNumber = request.bonusNumber
         )
+
+        return ApiResponse.ok(response)
     }
 
+    /** 최신 회차 조회 */
     @GetMapping("/latest")
-    fun getLatest(): WinningNumbersResponse {
+    fun getLatest(): ApiResponse<WinningNumbersResponse> {
         val entity = winningNumbersService.getLatest()
-            ?: throw InvalidLottoException("등록된 당첨 번호가 없습니다.")
-        return WinningNumbersResponse(
+
+        val response = WinningNumbersResponse(
             round = entity.round,
             mainNumbers = entity.mainNumbers,
             bonusNumber = entity.bonusNumber
         )
+
+        return ApiResponse.ok(response)
     }
 
+    /** 특정 회차 조회 */
     @GetMapping("/{round}")
-    fun getByRound(@PathVariable round: Long): WinningNumbersResponse {
+    fun getByRound(@PathVariable round: Long): ApiResponse<WinningNumbersResponse> {
         val entity = winningNumbersService.getByRound(round)
-            ?: throw InvalidLottoException("해당 회차의 당첨 번호가 없습니다. round=$round")
-        return WinningNumbersResponse(
+
+        val response = WinningNumbersResponse(
             round = entity.round,
             mainNumbers = entity.mainNumbers,
             bonusNumber = entity.bonusNumber
         )
+
+        return ApiResponse.ok(response)
     }
 }
