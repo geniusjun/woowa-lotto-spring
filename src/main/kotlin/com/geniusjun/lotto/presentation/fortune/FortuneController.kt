@@ -5,9 +5,11 @@ import com.geniusjun.lotto.presentation.common.ApiResponse
 import com.geniusjun.lotto.presentation.common.SecurityUtil
 import com.geniusjun.lotto.presentation.fortune.dto.FortuneResponse
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/api/fortune")
 class FortuneController(
     private val fortuneService: FortuneService
 ) {
