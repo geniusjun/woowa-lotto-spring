@@ -5,6 +5,8 @@ import com.geniusjun.lotto.application.auth.exception.GoogleIdTokenInvalidExcept
 import com.geniusjun.lotto.application.auth.exception.InvalidJwtTokenException
 import com.geniusjun.lotto.application.auth.exception.RefreshTokenMismatchException
 import com.geniusjun.lotto.application.auth.exception.RefreshTokenNotFoundException
+import com.geniusjun.lotto.domain.fortune.error.FortuneInvalidStateException
+import com.geniusjun.lotto.domain.fortune.error.FortuneNotFoundException
 import com.geniusjun.lotto.domain.lotto.exception.InvalidLottoException
 import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
 import com.geniusjun.lotto.domain.member.exception.DuplicateNicknameException
@@ -76,6 +78,20 @@ class GlobalExceptionHandler {
     @ExceptionHandler(RefreshTokenMismatchException::class)
     fun handleRefreshMismatch(ex: RefreshTokenMismatchException): ResponseEntity<ErrorResponse> {
         val code = ErrorCode.AUTH_REFRESH_MISMATCH
+        return buildErrorResponse(code, ex)
+    }
+
+    // ---- Fortune 관련 예외 핸들러 ----
+
+    @ExceptionHandler(FortuneNotFoundException::class)
+    fun handleFortuneNotFound(ex: FortuneNotFoundException): ResponseEntity<ErrorResponse> {
+        val code = ErrorCode.FORTUNE_NOT_FOUND
+        return buildErrorResponse(code, ex)
+    }
+
+    @ExceptionHandler(FortuneInvalidStateException::class)
+    fun handleFortuneInvalidState(ex: FortuneInvalidStateException): ResponseEntity<ErrorResponse> {
+        val code = ErrorCode.FORTUNE_INVALID_STATE
         return buildErrorResponse(code, ex)
     }
 
