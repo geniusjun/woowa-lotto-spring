@@ -2,6 +2,8 @@ package com.geniusjun.lotto.presentation.member
 
 import com.geniusjun.lotto.application.member.MemberService
 import com.geniusjun.lotto.presentation.common.ApiResponse
+import com.geniusjun.lotto.presentation.common.SecurityUtil
+import com.geniusjun.lotto.presentation.member.dto.BalanceResponse
 import com.geniusjun.lotto.presentation.member.dto.MemberCreateRequest
 import com.geniusjun.lotto.presentation.member.dto.MemberResponse
 import org.springframework.web.bind.annotation.*
@@ -38,5 +40,13 @@ class MemberController(
         )
 
         return ApiResponse.ok(response)
+    }
+
+    @GetMapping("/balance")
+    fun getBalance(): ApiResponse<BalanceResponse> {
+        val memberId = SecurityUtil.currentMemberId()
+        val balance = memberService.getMyBalance(memberId)
+
+        return ApiResponse.ok(BalanceResponse(balance))
     }
 }
