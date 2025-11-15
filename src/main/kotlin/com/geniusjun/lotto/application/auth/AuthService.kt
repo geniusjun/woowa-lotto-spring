@@ -35,9 +35,8 @@ class AuthService(
         // 2) 회원 조회 또는 생성
         val member = memberRepository.findByGoogleSub(payload.sub)
             ?: memberRepository.save(
-                Member(
+                Member.createWithGoogle(
                     nickname = payload.name ?: "user-${System.currentTimeMillis()}",
-                    balance = 0L,
                     googleSub = payload.sub
                 )
             )

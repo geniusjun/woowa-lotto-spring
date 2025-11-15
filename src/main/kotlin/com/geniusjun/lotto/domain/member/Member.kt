@@ -23,6 +23,18 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
+    companion object {
+        private const val DEFAULT_BALANCE = 100_000L
+
+        fun createWithGoogle(nickname: String, googleSub: String): Member {
+            return Member(
+                nickname = nickname,
+                balance = DEFAULT_BALANCE,
+                googleSub = googleSub
+            )
+        }
+    }
+
     fun decreaseBalance(amount: Long) {
         if (amount <= 0) {
             throw InvalidBalanceException("차감 금액은 0보다 커야 합니다. (입력값: $amount)")
