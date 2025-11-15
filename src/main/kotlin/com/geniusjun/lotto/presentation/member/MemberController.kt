@@ -9,7 +9,7 @@ import com.geniusjun.lotto.presentation.member.dto.MemberResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/api/member")
 class MemberController(
     private val memberService: MemberService
 ) {
