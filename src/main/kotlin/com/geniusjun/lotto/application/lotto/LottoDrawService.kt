@@ -59,7 +59,7 @@ class LottoDrawService(
             matchedNumbers = matchedNumbers,
             bonusNumber = winning.bonusNumber?.value,
             bonusMatched = result.bonusMatched,
-            rank = result.rank.name,
+            rank = result.rank.label,
             reward = result.reward,
             balance = balance
         )
