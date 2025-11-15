@@ -27,4 +27,13 @@ class MemberService(
         return memberRepository.findById(id)
             .orElseThrow { MemberNotFoundException("회원 정보를 찾을 수 없습니다. (id=$id)") }
     }
+
+    @Transactional(readOnly = true)
+    fun getMyBalance(memberId: Long): Long {
+        val member = memberRepository.findById(memberId)
+            .orElseThrow { MemberNotFoundException("회원을 찾을 수 없습니다. (id=$memberId)") }
+
+        return member.balance
+    }
+
 }

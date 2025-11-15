@@ -19,6 +19,10 @@ enum class ErrorCode(
     AUTH_REFRESH_NOT_FOUND(HttpStatus.UNAUTHORIZED, "리프레시 토큰을 찾을 수 없습니다."),
     AUTH_REFRESH_MISMATCH(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 일치하지 않습니다."),
 
+    // Fortune 관련
+    FORTUNE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "운세 문장을 찾을 수 없습니다."),
+    FORTUNE_INVALID_STATE(HttpStatus.INTERNAL_SERVER_ERROR, "운세 생성 중 오류가 발생했습니다."),
+
     // 공통
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.")

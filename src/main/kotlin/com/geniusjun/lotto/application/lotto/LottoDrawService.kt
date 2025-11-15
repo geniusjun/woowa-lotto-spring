@@ -1,7 +1,6 @@
 package com.geniusjun.lotto.application.lotto
 
 import com.geniusjun.lotto.domain.lotto.*
-import com.geniusjun.lotto.domain.lotto.exception.WinningNumbersNotFoundException
 import com.geniusjun.lotto.domain.member.MemberRepository
 import com.geniusjun.lotto.domain.member.exception.MemberNotFoundException
 import com.geniusjun.lotto.presentation.lotto.dto.LottoDrawResponse
@@ -29,7 +28,7 @@ class LottoDrawService(
 
         val latestWinning = winningNumbersService.getLatest()
         val winningNumbers = DrawResult.of(
-            mainNumbers = latestWinning.mainNumbers,
+            mainNumbers = latestWinning.mainNumbersAsList(),
             bonus = latestWinning.bonusNumber
         )
 
@@ -60,7 +59,7 @@ class LottoDrawService(
             matchedNumbers = matchedNumbers,
             bonusNumber = winning.bonusNumber?.value,
             bonusMatched = result.bonusMatched,
-            rank = result.rank.name,
+            rank = result.rank.label,
             reward = result.reward,
             balance = balance
         )

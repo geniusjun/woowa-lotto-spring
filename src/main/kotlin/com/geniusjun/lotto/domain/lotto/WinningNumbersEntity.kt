@@ -11,18 +11,20 @@ class WinningNumbersEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "round", nullable = false, unique = true)
-    val round: Long,
+    @Column(name = "main_numbers", nullable = false)
+    var mainNumbers: String,
 
-    @ElementCollection
-    @CollectionTable(
-        name = "winning_main_numbers",
-        joinColumns = [JoinColumn(name = "winning_id")]
-    )
-    @Column(name = "number")
-    val mainNumbers: List<Int>,
+    @Column(name = "bonus_number", nullable = false)
+    var bonusNumber: Int
 
-    @Column(name = "bonus_number")
-    val bonusNumber: Int? = null,
-) : BaseEntity()
+) : BaseEntity() {
+
+    fun update(main: List<Int>, bonus: Int) {
+        this.mainNumbers = main.joinToString(",")
+        this.bonusNumber = bonus
+    }
+
+    fun mainNumbersAsList(): List<Int> =
+        mainNumbers.split(",").map { it.trim().toInt() }
+}
 

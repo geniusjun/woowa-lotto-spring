@@ -1,45 +1,36 @@
 package com.geniusjun.lotto.application.fortune
 
+import com.geniusjun.lotto.domain.fortune.FortuneMessageRepository
+import com.geniusjun.lotto.domain.fortune.error.FortuneInvalidStateException
+import com.geniusjun.lotto.domain.fortune.error.FortuneNotFoundException
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
-import java.time.Duration
 import java.time.LocalDate
 
 @Service
 class FortuneService(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: StringRedisTemplate,
+    private val fortuneMessageRepository: FortuneMessageRepository
 ) {
 
-    companion object {
-        private const val CACHE_HOURS = 24L
-
-        private val CANDIDATES = listOf(
-            "오늘은 로또가 잘 맞을지도?",
-            "쉬어가도 되는 날이에요",
-            "재화가 들어오는 날이에요!",
-            "오늘은 집안에 꼭 붙어있어요."
-        )
-    }
-
     fun getTodayFortune(memberId: Long): String {
-        val key = buildKey(memberId)
+        val today = LocalDate.now().toString()
+        val key = "fortune:seed:$today"
+
         val ops = redisTemplate.opsForValue()
 
-        // 캐시가 있으면 그대로 반환
-        ops.get(key)?.let { return it }
+        val seedValue = ops.get(key)
+            ?: throw FortuneInvalidStateException("오늘의 운세 시드가 Redis에 존재하지 않습니다. key=$key")
 
-        // 새 운세 생성
-        val fortune = pickRandomFortune()
+        val seed = seedValue.toIntOrNull()
+            ?: throw FortuneInvalidStateException("운세 시드 값이 정수가 아닙니다. value=$seedValue")
 
-        ops.set(key, fortune, Duration.ofHours(CACHE_HOURS))
-        return fortune
+        val messages = fortuneMessageRepository.findAll()
+        if (messages.isEmpty()) {
+            throw FortuneNotFoundException("운세 메시지가 존재하지 않습니다. 관리자 확인 필요.")
+        }
+
+        val idx = ((seed + (memberId % messages.size)) % messages.size).toInt()
+        return messages[idx].message
     }
-
-    private fun buildKey(memberId: Long): String {
-        val today = LocalDate.now()
-        return "fortune:$memberId:$today"
-    }
-
-    private fun pickRandomFortune(): String =
-        CANDIDATES.random()
 }
