@@ -17,30 +17,28 @@ jobs:
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "📌 Start Deployment in VM"
+            echo "[CD] Deployment started."
 
-            cd ~/apps/woowa-lotto
-
-            echo "📌 Pull latest docker image"
+            echo "[CD] Pulling latest docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/woowa-lotto:latest
 
-            echo "📌 Spin up GREEN container"
-            docker compose -f docker-compose.green.yml up -d
+            echo "[CD] Starting GREEN container..."
+            docker compose -f "${{ secrets.GREEN_COMPOSE_PATH }}" up -d
 
-            echo "📌 Check GREEN health"
+            echo "[CD] Checking GREEN health..."
             for i in {1..10}
             do
               curl -sf http://127.0.0.1:8082/health && break
-              echo "Waiting for GREEN..."
+              echo "[CD] GREEN is not ready yet... retrying ($i/10)"
               sleep 3
             done
 
-            echo "📌 Swap Nginx → GREEN"
-            bash ~/switch-to-green.sh
+            echo "[CD] Switching NGINX to GREEN..."
+            bash "${{ secrets.SWITCH_TO_GREEN_SCRIPT }}"
 
-            echo "📌 Remove BLUE container"
-            docker compose -f docker-compose.blue.yml down || true
+            echo "[CD] Shutting down BLUE container..."
+            docker compose -f "${{ secrets.BLUE_COMPOSE_PATH }}" down || true
 
-            echo "🎉 Deployment to GREEN completed successfully"
+            echo "[CD] Deployment to GREEN completed successfully."
