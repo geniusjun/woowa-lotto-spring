@@ -1,0 +1,44 @@
+name: CD - Deploy to GCP VM
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to GCP VM via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "[CD] Deployment started."
+
+            echo "[CD] Pulling latest docker image..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/woowa-lotto:latest
+
+            echo "[CD] Starting GREEN container..."
+            docker compose -f "${{ secrets.GREEN_COMPOSE_PATH }}" up -d
+
+            echo "[CD] Checking GREEN health..."
+            for i in {1..10}
+            do
+              curl -sf http://127.0.0.1:8082/health && break
+              echo "[CD] GREEN is not ready yet... retrying ($i/10)"
+              sleep 3
+            done
+
+            echo "[CD] Switching NGINX to GREEN..."
+            bash "${{ secrets.SWITCH_TO_GREEN_SCRIPT }}"
+
+            echo "[CD] Shutting down BLUE container..."
+            docker compose -f "${{ secrets.BLUE_COMPOSE_PATH }}" down || true
+
+            echo "[CD] Deployment to GREEN completed successfully."
