@@ -18,7 +18,8 @@ class SecurityConfig {
                     "/swagger-ui/**",
                     "/v3/api-docs",
                     "/v3/api-docs/**",
-                    "/api/auth/**").permitAll()
+                    "/api/auth/**",
+                    "/health").permitAll()
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
