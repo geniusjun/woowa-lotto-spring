@@ -19,26 +19,60 @@ jobs:
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "[CD] Deployment started."
+            #!/bin/bash
+            set -e
+
+            NGINX_CONF="/etc/nginx/sites-enabled/cheonghak.io.kr"
+
+            echo "[CD] Detecting current ACTIVE color..."
+
+            # 현재 Nginx upstream의 활성 포트에 따라 Blue인지 Green인지 감지
+            if grep -q "server 127.0.0.1:8081;" "$NGINX_CONF"; then
+                ACTIVE="blue"
+                TARGET="green"
+                TARGET_PORT=8082
+                TARGET_COMPOSE="docker-compose.green.yml"
+                ACTIVE_COMPOSE="docker-compose.blue.yml"
+                SWITCH_SCRIPT="switch-to-green.sh"
+            else
+                ACTIVE="green"
+                TARGET="blue"
+                TARGET_PORT=8081
+                TARGET_COMPOSE="docker-compose.blue.yml"
+                ACTIVE_COMPOSE="docker-compose.green.yml"
+                SWITCH_SCRIPT="switch-to-blue.sh"
+            fi
+
+            echo "[CD] ACTIVE: $ACTIVE"
+            echo "[CD] TARGET to deploy: $TARGET ($TARGET_PORT)"
 
             echo "[CD] Pulling latest docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/woowa-lotto:latest
 
-            echo "[CD] Starting GREEN container..."
-            docker compose -f "${{ secrets.GREEN_COMPOSE_PATH }}" up -d
+            echo "[CD] Starting $TARGET container..."
+            docker compose -f "$TARGET_COMPOSE" up -d
 
-            echo "[CD] Checking GREEN health..."
+            echo "[CD] Checking health of $TARGET..."
             for i in {1..10}
             do
-              curl -sf http://127.0.0.1:8082/health && break
-              echo "[CD] GREEN is not ready yet... retrying ($i/10)"
+              if curl -sf "http://127.0.0.1:${TARGET_PORT}/health"; then
+                echo "[CD] $TARGET is healthy!"
+                break
+              fi
+
+              echo "[CD] $TARGET is not healthy yet... retrying ($i/10)"
               sleep 3
+
+              if [ $i -eq 10 ]; then
+                echo "❌ Deployment failed: $TARGET failed health check."
+                exit 1
+              fi
             done
 
-            echo "[CD] Switching NGINX to GREEN..."
-            bash "${{ secrets.SWITCH_TO_GREEN_SCRIPT }}"
+            echo "[CD] Switching NGINX to $TARGET..."
+            bash "$SWITCH_SCRIPT"
 
-            echo "[CD] Shutting down BLUE container..."
-            docker compose -f "${{ secrets.BLUE_COMPOSE_PATH }}" down || true
+            echo "[CD] Shutting down old $ACTIVE container..."
+            docker compose -f "$ACTIVE_COMPOSE" down || true
 
-            echo "[CD] Deployment to GREEN completed successfully."
+            echo "[CD] Deployment completed successfully! Now serving: $TARGET"
