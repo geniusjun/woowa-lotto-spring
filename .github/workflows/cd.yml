@@ -12,6 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🔥 DockerHub 로그인 (반드시 필요)
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -53,3 +54,31 @@ jobs:
 
             echo "[CD] Pulling latest docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/woowa-lotto:latest
+
+            echo "[CD] Starting $TARGET container..."
+            docker compose -f "$TARGET_COMPOSE" up -d
+
+            echo "[CD] Checking health of $TARGET..."
+            for i in {1..10}
+            do
+              if curl -sf "http://127.0.0.1:${TARGET_PORT}/health"; then
+                echo "[CD] $TARGET is healthy!"
+                break
+              fi
+
+              echo "[CD] $TARGET is not healthy yet... retrying ($i/10)"
+              sleep 3
+
+              if [ $i -eq 10 ]; then
+                echo "❌ Deployment failed: $TARGET failed health check."
+                exit 1
+              fi
+            done
+
+            echo "[CD] Switching NGINX to $TARGET..."
+            bash "$SWITCH_SCRIPT"
+
+            echo "[CD] Shutting down old $ACTIVE container..."
+            docker compose -f "$ACTIVE_COMPOSE" down || true
+
+            echo "[CD] Deployment completed successfully! Now serving: $TARGET"
