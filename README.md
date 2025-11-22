@@ -24,6 +24,7 @@
 ### 메인 화면 · 로또 구매 팝업 · 오늘의 운세 팝업 · 랭킹 팝업
 <p align="center">
   <img src="https://github.com/user-attachments/assets/69134a2c-5fef-4c9d-8e7e-d25a4be4ccae" width="30%" />
+  <img src="https://github.com/user-attachments/assets/9b6443c3-a40f-4f27-ac5d-f5e5cfa66c13" width="30%" />
   <img src="https://github.com/user-attachments/assets/e2f94eb1-8a90-4f69-ab5a-88bca841077b" width="30%" />
   <img src="https://github.com/user-attachments/assets/21ba6eb5-8ac0-4d54-b864-b9983be78f03" width="30%" />
   <img src="https://github.com/user-attachments/assets/63353d9a-46c2-4a71-a403-e6f5b5ead55b" width="30%" />
